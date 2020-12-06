@@ -5,18 +5,18 @@ def nothing(x):
     pass
 
 cv2.namedWindow("Trackbars")
-cv2.createTrackbar("L - H", "Trackbars", 85, 179, nothing)
-cv2.createTrackbar("L - S", "Trackbars", 106, 255, nothing)
-cv2.createTrackbar("L - V", "Trackbars", 199, 255, nothing)
-cv2.createTrackbar("U - H", "Trackbars", 138, 179, nothing)
-cv2.createTrackbar("U - S", "Trackbars", 134, 255, nothing)
+cv2.createTrackbar("L - H", "Trackbars", 151, 179, nothing)
+cv2.createTrackbar("L - S", "Trackbars", 96, 255, nothing)
+cv2.createTrackbar("L - V", "Trackbars", 175, 255, nothing)
+cv2.createTrackbar("U - H", "Trackbars", 154, 179, nothing)
+cv2.createTrackbar("U - S", "Trackbars", 255, 255, nothing)
 cv2.createTrackbar("U - V", "Trackbars", 255, 255, nothing)
 cv2.createTrackbar("Thresh1", "Trackbars", 271, 400, nothing)
 cv2.createTrackbar("Thresh2", "Trackbars", 398, 400, nothing)
 
-cv2.createTrackbar("hThresh", "Trackbars", 42, 400, nothing)
+cv2.createTrackbar("hThresh", "Trackbars", 37, 400, nothing)
 cv2.createTrackbar("hMinLine", "Trackbars", 3, 100, nothing)
-cv2.createTrackbar("hMaxGap", "Trackbars", 15, 100, nothing)
+cv2.createTrackbar("hMaxGap", "Trackbars", 13, 100, nothing)
 
 kernel = np.ones((2,2), np.uint8) 
 while True:
@@ -38,8 +38,12 @@ while True:
 
     images = [
         cv2.imread('color110.png', cv2.IMREAD_COLOR),
-        cv2.imread('color156.png', cv2.IMREAD_COLOR),
-        cv2.imread('color175.png', cv2.IMREAD_COLOR)
+        cv2.imread('color-Fixed-6.png', cv2.IMREAD_COLOR),
+        cv2.imread('color-Fixed-5.png', cv2.IMREAD_COLOR),
+        cv2.imread('color-Fixed-4.png', cv2.IMREAD_COLOR),
+        cv2.imread('color-Fixed-3.png', cv2.IMREAD_COLOR),
+        cv2.imread('color-Fixed-2.png', cv2.IMREAD_COLOR),
+        cv2.imread('color-Fixed-1.png', cv2.IMREAD_COLOR)
     ]
     black = np.zeros((50,440))
 
@@ -49,8 +53,14 @@ while True:
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         mask = cv2.inRange(hsv, lower_blue, upper_blue)
-
+        #mask = 255 - mask
+        # No Mask
         result = img
+
+        #use mask
+        #result = cv2.bitwise_and(img, img, mask=mask)
+        result[mask>0]=(255,255,152)
+
         lines = cv2.Canny(result, threshold1=Thresh1, threshold2=Thresh2)
         img_dilation = cv2.dilate(lines, kernel, iterations=1) 
 
@@ -58,10 +68,10 @@ while True:
         if HoughLines is not None:
             for line in HoughLines:
                 coords = line[0]
-                cv2.line(result, (coords[0], coords[1]), (coords[2], coords[3]), [0,0,255], 3)
+                cv2.line(img, (coords[0], coords[1]), (coords[2], coords[3]), [0,0,255], 3)
                 cv2.line(black, (coords[0], coords[1]), (coords[2], coords[3]), [255,255,255], 3)
 
-        cv2.imshow(f"Mask{i}", mask)
+        #cv2.imshow(f"Mask{i}", mask)
         cv2.imshow(f"Original{i}", img)
         cv2.imshow(f"Result{i}", result)
         cv2.imshow(f"Lines{i}", lines)

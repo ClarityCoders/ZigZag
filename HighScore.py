@@ -38,12 +38,18 @@ while True:
     black = np.zeros((50,440))
 
     color = cv2.cvtColor(img, cv2.IMREAD_COLOR)
+    hsv = cv2.cvtColor(color, cv2.COLOR_BGR2HSV)
+
+    #Mask
+    mask = cv2.inRange(hsv, np.array([151, 96, 175]), np.array([154, 255, 255]))
+    color[mask>0]=(255,255,152)
+
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     lines = cv2.Canny(color, threshold1=271, threshold2=398)
     img_dilation = cv2.dilate(lines, kernel, iterations=1) 
 
-    HoughLines = cv2.HoughLinesP(img_dilation, 1, np.pi/180, 42, 3, 15)
+    HoughLines = cv2.HoughLinesP(img_dilation, 1, np.pi/180, 37, 3, 24)
     if HoughLines is not None:
         for line in HoughLines:
             coords = line[0]
@@ -67,7 +73,10 @@ while True:
                 rightColor = 400
             leftColor = int(black[y+lookUp,x-pushFar])
 
-            rightBallColor = int(black[y+lookUp,x+r+pushShort])
+            if x+r+pushShort <= 400:
+                rightBallColor = int(black[y+lookUp,x+r+pushShort])
+            else:
+                rightBallColor = 400
             leftBallColor = int(black[y+lookUp,x-r-pushShort])
 
             # Switch to left.
@@ -79,18 +88,18 @@ while True:
             if sum(black[y+lookUp,x+r+pushShort:x+pushFar]) > 0 and goingRight:
                 pyautogui.click()
                 goingRight = False
-                print("first")
-                cv2.imwrite(f"zleft{count}.png", black)
+                #print("first")
+                #cv2.imwrite(f"zleft{count}.png", black)
                 cv2.imwrite(f"zleft-color{count}.png", color)
 
             elif not goingRight and sum(black[y+lookUp,x-pushFar : x-r-pushShort]) > 0:
                 pyautogui.click()
                 goingRight = True
-                cv2.imwrite(f"zright{count}.png", black)
+                #cv2.imwrite(f"zright{count}.png", black)
                 cv2.imwrite(f"zright-color{count}.png", color)
 
-    #cv2.imshow('Bot View', lines)
-    #cv2.waitKey(1)
+    #if count % 3 == 0:
+        #cv2.imwrite(f"a{count}.png", color)
     end_t = time.time()
     time_taken = end_t - start_t
     start_t = end_t
