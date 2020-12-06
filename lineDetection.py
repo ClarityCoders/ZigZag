@@ -42,20 +42,17 @@ while True:
         cv2.imread('color175.png', cv2.IMREAD_COLOR)
     ]
     black = np.zeros((50,440))
-    #img = cv2.imread('color110.png', cv2.IMREAD_COLOR)
-    # Convert the image to gray-scale
+
     for i, img in enumerate(images):
         black = np.zeros((50,440))
-        #print(black.shape)
+
         hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
         mask = cv2.inRange(hsv, lower_blue, upper_blue)
-        # use mask
-        #result = cv2.bitwise_and(img, img, mask=mask)
+
         result = img
         lines = cv2.Canny(result, threshold1=Thresh1, threshold2=Thresh2)
         img_dilation = cv2.dilate(lines, kernel, iterations=1) 
-        #print(lines.shape)
 
         HoughLines = cv2.HoughLinesP(img_dilation, 1, np.pi/180, hThresh, hMinLine, hMaxGap)
         if HoughLines is not None:

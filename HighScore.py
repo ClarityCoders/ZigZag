@@ -25,6 +25,7 @@ device = devices[0]
 sct = mss.mss()
 goingRight = True
 count = 0
+kernel = np.ones((2,2), np.uint8)
 while True:
     count += 1
     scr = sct.grab({
@@ -34,14 +35,23 @@ while True:
         'height': 50
     })
     img = np.array(scr)
+    black = np.zeros((50,440))
+
     color = cv2.cvtColor(img, cv2.IMREAD_COLOR)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    lines = cv2.Canny(img, threshold1=119, threshold2=250)
+
+    lines = cv2.Canny(color, threshold1=271, threshold2=398)
+    img_dilation = cv2.dilate(lines, kernel, iterations=1) 
+
+    HoughLines = cv2.HoughLinesP(img_dilation, 1, np.pi/180, 42, 3, 15)
+    if HoughLines is not None:
+        for line in HoughLines:
+            coords = line[0]
+            cv2.line(black, (coords[0], coords[1]), (coords[2], coords[3]), [255,255,255], 3)
 
 
     circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 20, param1=50, param2=30, minRadius=1, maxRadius=40)
     if circles is not None:
-        #print(len(circles))
         circles = np.uint16(circles)
         for pt in circles[0, :]:
             x, y, r = pt[0], pt[1], pt[2]
@@ -52,13 +62,13 @@ while True:
             lookUp = -5
 
             if x+pushFar <= 400:
-                rightColor = int(lines[y+lookUp,x+pushFar])
+                rightColor = int(black[y+lookUp,x+pushFar])
             else:
                 rightColor = 400
-            leftColor = int(lines[y+lookUp,x-pushFar])
+            leftColor = int(black[y+lookUp,x-pushFar])
 
-            rightBallColor = int(lines[y+lookUp,x+r+pushShort])
-            leftBallColor = int(lines[y+lookUp,x-r-pushShort])
+            rightBallColor = int(black[y+lookUp,x+r+pushShort])
+            leftBallColor = int(black[y+lookUp,x-r-pushShort])
 
             # Switch to left.
             diff = abs(rightColor - rightBallColor)
@@ -66,17 +76,18 @@ while True:
             # Switch to right test
             diff2 = abs(leftColor - leftBallColor)
 
-            if sum(lines[y+lookUp,x+r+pushShort:x+pushFar]) > 0 and goingRight:
+            if sum(black[y+lookUp,x+r+pushShort:x+pushFar]) > 0 and goingRight:
                 pyautogui.click()
                 goingRight = False
-                gray = cv2.circle(gray, (x+pushFar,y+lookUp), radius=1, color=(0, 255, 0), thickness=-1)
-                gray = cv2.circle(gray, (x+r+pushShort,y+lookUp), radius=1, color=(0, 255, 0), thickness=-1)
-                gray = cv2.circle(gray, (x-pushFar,y+lookUp), radius=1, color=(0, 255, 0), thickness=-1)
-                gray = cv2.circle(gray, (x-r-pushShort,y+lookUp), radius=1, color=(0, 255, 0), thickness=-1)
+                print("first")
+                cv2.imwrite(f"zleft{count}.png", black)
+                cv2.imwrite(f"zleft-color{count}.png", color)
 
-            elif not goingRight and sum(lines[y+lookUp,x-pushFar : x-r-pushShort]) > 0:
+            elif not goingRight and sum(black[y+lookUp,x-pushFar : x-r-pushShort]) > 0:
                 pyautogui.click()
                 goingRight = True
+                cv2.imwrite(f"zright{count}.png", black)
+                cv2.imwrite(f"zright-color{count}.png", color)
 
     #cv2.imshow('Bot View', lines)
     #cv2.waitKey(1)
