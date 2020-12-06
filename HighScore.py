@@ -49,7 +49,7 @@ while True:
     lines = cv2.Canny(color, threshold1=271, threshold2=398)
     img_dilation = cv2.dilate(lines, kernel, iterations=1) 
 
-    HoughLines = cv2.HoughLinesP(img_dilation, 1, np.pi/180, 37, 3, 24)
+    HoughLines = cv2.HoughLinesP(img_dilation, 1, np.pi/180, 37, 3, 22)
     if HoughLines is not None:
         for line in HoughLines:
             coords = line[0]
@@ -63,9 +63,9 @@ while True:
             x, y, r = pt[0], pt[1], pt[2]
             cv2.circle(img, (x,y), r, (0, 0, 255), 5)
 
-            pushFar = 30
-            pushShort = 6
-            lookUp = -5
+            pushFar = 35
+            pushShort = 10
+            lookUp = -3
 
             if x+pushFar <= 400:
                 rightColor = int(black[y+lookUp,x+pushFar])

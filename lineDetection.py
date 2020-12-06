@@ -16,7 +16,7 @@ cv2.createTrackbar("Thresh2", "Trackbars", 398, 400, nothing)
 
 cv2.createTrackbar("hThresh", "Trackbars", 37, 400, nothing)
 cv2.createTrackbar("hMinLine", "Trackbars", 3, 100, nothing)
-cv2.createTrackbar("hMaxGap", "Trackbars", 13, 100, nothing)
+cv2.createTrackbar("hMaxGap", "Trackbars", 22, 100, nothing)
 
 kernel = np.ones((2,2), np.uint8) 
 while True:
@@ -37,7 +37,7 @@ while True:
     upper_blue = np.array([u_h, u_s, u_v])
 
     images = [
-        cv2.imread('color110.png', cv2.IMREAD_COLOR),
+        cv2.imread('color-Fixed-8.png', cv2.IMREAD_COLOR),
         cv2.imread('color-Fixed-6.png', cv2.IMREAD_COLOR),
         cv2.imread('color-Fixed-5.png', cv2.IMREAD_COLOR),
         cv2.imread('color-Fixed-4.png', cv2.IMREAD_COLOR),
