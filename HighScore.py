@@ -5,6 +5,8 @@ import time
 import mss
 import pyautogui
 
+from utils.getkeys import key_check
+
 pyautogui.PAUSE = 0
 for i in range(1,5):
     print(i)
@@ -14,19 +16,21 @@ pyautogui.click()
 
 start_t = time.time()
 
-adb = Client(host="127.0.0.1", port=5037)
-devices = adb.devices()
 
-if len(devices) == 0:
-    print("No devices found")
-
-device = devices[0]
 
 sct = mss.mss()
 goingRight = True
 count = 0
 kernel = np.ones((2,2), np.uint8)
+
+image_holder = []
+
 while True:
+
+    keys = key_check()
+    if keys == "H":
+        break
+
     count += 1
     scr = sct.grab({
         'left': 0,
@@ -46,24 +50,25 @@ while True:
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    lines = cv2.Canny(color, threshold1=271, threshold2=398)
+    lines = cv2.Canny(color, threshold1=100, threshold2=120)
     img_dilation = cv2.dilate(lines, kernel, iterations=1) 
 
-    HoughLines = cv2.HoughLinesP(img_dilation, 1, np.pi/180, 37, 3, 22)
+    #HoughLines = cv2.HoughLinesP(img_dilation, 1, np.pi/180, 37, 3, 22)
+    HoughLines = cv2.HoughLinesP(lines, 1, np.pi/180, threshold = 31, minLineLength = 20, maxLineGap = 1)
     if HoughLines is not None:
         for line in HoughLines:
             coords = line[0]
             cv2.line(black, (coords[0], coords[1]), (coords[2], coords[3]), [255,255,255], 3)
 
 
-    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 20, param1=50, param2=30, minRadius=1, maxRadius=40)
+    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 20, param1=50, param2=17, minRadius=10, maxRadius=14)
     if circles is not None:
         circles = np.uint16(circles)
         for pt in circles[0, :]:
             x, y, r = pt[0], pt[1], pt[2]
-            cv2.circle(img, (x,y), r, (0, 0, 255), 5)
+            #cv2.circle(img, (x,y), r, (0, 0, 255), 5)
 
-            pushFar = 35
+            pushFar = 38
             pushShort = 10
             lookUp = -3
 
@@ -77,7 +82,11 @@ while True:
                 rightBallColor = int(black[y+lookUp,x+r+pushShort])
             else:
                 rightBallColor = 400
-            leftBallColor = int(black[y+lookUp,x-r-pushShort])
+
+            if x-r-pushShort >= 0:
+                leftBallColor = int(black[y+lookUp,x-r-pushShort])
+            else:
+                leftBallColor = 0
 
             # Switch to left.
             diff = abs(rightColor - rightBallColor)
@@ -88,18 +97,25 @@ while True:
             if sum(black[y+lookUp,x+r+pushShort:x+pushFar]) > 0 and goingRight:
                 pyautogui.click()
                 goingRight = False
-                #print("first")
-                #cv2.imwrite(f"zleft{count}.png", black)
-                cv2.imwrite(f"zleft-color{count}.png", color)
+                image_holder.append((img, f"{count}color_{x+r+pushShort}-{x+pushFar}_{y+lookUp}_HitRight.png"))
 
             elif not goingRight and sum(black[y+lookUp,x-pushFar : x-r-pushShort]) > 0:
                 pyautogui.click()
                 goingRight = True
-                #cv2.imwrite(f"zright{count}.png", black)
-                cv2.imwrite(f"zright-color{count}.png", color)
+                image_holder.append((img, f"{count}color_{x-pushFar}-{x-r-pushShort}_{y+lookUp}_HitLeft.png"))
+            else:
+                image_holder.append((img, f"{count}color_nohit.png"))
+    else:
+        image_holder.append((img, f"{count}color_noBALL-------------------.png"))
+        print(f"{count} - No BALLS!")
 
-    #if count % 3 == 0:
-        #cv2.imwrite(f"a{count}.png", color)
     end_t = time.time()
     time_taken = end_t - start_t
     start_t = end_t
+
+# Do you want to write images?
+response = input("Write images: y/n")
+
+if response.lower() == "y":
+    for image in image_holder:
+        cv2.imwrite("images/"+ image[1], image[0])
