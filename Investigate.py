@@ -43,5 +43,5 @@ def DrawImage(img, x1, x2 , y):
 
 
 if __name__ == "__main__":  
-    img = cv2.imread("images/" + '723color_nohit.png', cv2.IMREAD_COLOR)
-    DrawImage(img, 155, 169, 20)
+    img = cv2.imread('2463color_218-240_23_HitLeft.png', cv2.IMREAD_COLOR)
+    DrawImage(img, 218, 240, 23)
