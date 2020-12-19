@@ -6,6 +6,7 @@ import mss
 import pyautogui
 
 from utils.getkeys import key_check
+from utils.whitedetect import CheckWhite
 
 pyautogui.PAUSE = 0
 for i in range(1,5):
@@ -67,8 +68,22 @@ while True:
             x, y, r = pt[0], pt[1], pt[2]
 
             pushFar = 38
-            pushShort = 8
+            pushShort = 10
             lookUp = -3
+
+
+            if goingRight:
+                answer = CheckWhite(color, x, y, pushFar, r, count)
+            else:
+                answer = CheckWhite(color, x, y, -pushFar, r, count)
+
+            if answer:
+                goingRight = not goingRight
+                pyautogui.click()
+                image_holder.append((img, f"{count}--CHECKWHITE-CLICK{goingRight}-{x}-{y}-{pushFar}-{r}.png"))
+                continue
+
+
             if sum(black[y+lookUp,x+r+pushShort:x+pushFar]) > 0 and goingRight:
                 pyautogui.click()
                 goingRight = False
@@ -93,4 +108,4 @@ response = input("Write images: y/n")
 
 if response.lower() == "y":
     for image in image_holder:
-        cv2.imwrite("images/"+ image[1], image[0])
+        cv2.imwrite("C:/Users/programmer/Desktop/LInes/ZigZag/images/"+ image[1], image[0])

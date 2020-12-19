@@ -7,6 +7,8 @@ import pyautogui
 import random
 
 from utils.getkeys import key_check
+from utils.whitedetect import CheckWhite
+
 episode_count = 0
 total_Episodes = 100
 highscore = 0
@@ -88,6 +90,16 @@ while True and episode_count < total_Episodes:
                 x, y, r = pt[0], pt[1], pt[2]
 
                 if y < 20 or y > 40:
+                    continue
+
+                if goingRight:
+                    answer = CheckWhite(color, x, y, pushFar, r, count)
+                else:
+                    answer = CheckWhite(color, x, y, -pushFar, r, count)
+
+                if answer:
+                    goingRight = not goingRight
+                    pyautogui.click()
                     continue
 
                 if sum(black[y+lookUp,x+r+pushShort:x+pushFar]) > 0 and goingRight:
