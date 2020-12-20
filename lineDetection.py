@@ -15,7 +15,7 @@ cv2.createTrackbar("Thresh1", "Trackbars", 190, 1000, nothing)
 cv2.createTrackbar("Thresh2", "Trackbars", 135, 1000, nothing)
 
 cv2.createTrackbar("hThresh", "Trackbars", 19, 400, nothing)
-cv2.createTrackbar("hMinLine", "Trackbars", 19, 100, nothing)
+cv2.createTrackbar("hMinLine", "Trackbars", 20, 100, nothing)
 cv2.createTrackbar("hMaxGap", "Trackbars", 1, 100, nothing)
 
 kernel = np.ones((3,3), np.uint8) 
@@ -37,34 +37,35 @@ while True:
     upper_blue = np.array([u_h, u_s, u_v])
 
     images = [
-        cv2.imread('LineTests/' + '1041color_nohit.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '889color_nohit.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '1099color_nohit.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '1004color_nohit.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '1260color_128-146_22_HitLeft.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '4763color_nohit.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '1435color_nohit.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '1681color_87-105_22_HitLeft.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '232color_nohit.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '1488color_222-239_22_HitRight.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '1542color_210-227_22_HitLeft.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '1604color_nohit.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '2233color_302-319_22_HitLeft.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '1034color_nohit.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '2321color_nohit.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '497color_165-182_22_HitLeft.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '211color_306-323_22_HitLeft.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '1888color_302-320_22_HitRight.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '2722color_212-230_22_HitRight.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '556color_313-330_22_HitRight.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '1558color_257-275_22_HitLeft.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '407color_317-338_24_HitRight.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '151color_233-254_23_HitLeft.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '2463color_218-240_23_HitLeft.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '1660color_291-311_23_HitLeft.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '748color_nohit.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '2357color_92-111_23_HitLeft.png', cv2.IMREAD_COLOR),
-        cv2.imread('LineTests/' + '572color_54-74_23_HitLeft.png', cv2.IMREAD_COLOR),
+        cv2.imread('LineTests/' + '2065color220-26-10_240-258_23_HitRight.png', cv2.IMREAD_COLOR),
+        cv2.imread('LineTests/' + '3166color_nohit-72-26-11.png', cv2.IMREAD_COLOR),
+        cv2.imread('LineTests/' + '1364color_nohit-240-26-11.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '1004color_nohit.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '1260color_128-146_22_HitLeft.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '4763color_nohit.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '1435color_nohit.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '1681color_87-105_22_HitLeft.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '232color_nohit.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '1488color_222-239_22_HitRight.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '1542color_210-227_22_HitLeft.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '1604color_nohit.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '2233color_302-319_22_HitLeft.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '1034color_nohit.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '2321color_nohit.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '497color_165-182_22_HitLeft.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '211color_306-323_22_HitLeft.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '1888color_302-320_22_HitRight.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '2722color_212-230_22_HitRight.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '556color_313-330_22_HitRight.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '1558color_257-275_22_HitLeft.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '407color_317-338_24_HitRight.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '151color_233-254_23_HitLeft.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '2463color_218-240_23_HitLeft.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '1660color_291-311_23_HitLeft.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '748color_nohit.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '2357color_92-111_23_HitLeft.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '572color_54-74_23_HitLeft.png', cv2.IMREAD_COLOR),
+        # cv2.imread('LineTests/' + '585color_202-220_23_HitLeft.png', cv2.IMREAD_COLOR),
     ]
     black = np.zeros((50,440))
 

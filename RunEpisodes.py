@@ -10,7 +10,7 @@ from utils.getkeys import key_check
 from utils.whitedetect import CheckWhite
 
 episode_count = 0
-total_Episodes = 100
+total_Episodes = 1000
 highscore = 0
 
 while True and episode_count < total_Episodes:
@@ -48,7 +48,7 @@ while True and episode_count < total_Episodes:
     minLineLength = 19
     maxLineGap = 1
     pushFar = 38
-    pushShort = 10
+    pushShort = 15
 
     while True:
 
@@ -93,27 +93,55 @@ while True and episode_count < total_Episodes:
                     continue
 
                 if goingRight:
-                    answer = CheckWhite(color, x, y, pushFar, r, count)
+                    answer = CheckWhite(color, x, y+lookUp, pushFar, r, count)
+                    if not answer:
+                        answer = CheckWhite(color, x, y, pushFar, r, count)
                 else:
-                    answer = CheckWhite(color, x, y, -pushFar, r, count)
+                    answer = CheckWhite(color, x, y+lookUp, -pushFar, r, count)
+                    if not answer:
+                        answer = CheckWhite(color, x, y, -pushFar, r, count)
 
                 if answer:
                     goingRight = not goingRight
                     pyautogui.click()
+                    time.sleep(0.02)
                     continue
 
                 if sum(black[y+lookUp,x+r+pushShort:x+pushFar]) > 0 and goingRight:
                     pyautogui.click()
+                    time.sleep(0.02)
                     goingRight = False
 
                 elif not goingRight and sum(black[y+lookUp,x-pushFar : x-r-pushShort]) > 0:
                     pyautogui.click()
+                    time.sleep(0.02)
                     goingRight = True
-        else:
-            #print(f"{count} - No BALLS!")
+
+                elif sum(black[y,x+r+pushShort:x+pushFar]) > 0 and goingRight:
+                    pyautogui.click()
+                    time.sleep(0.02)
+                    goingRight = False
+
+                elif not goingRight and sum(black[y,x-pushFar : x-r-pushShort]) > 0:
+                    pyautogui.click()
+                    time.sleep(0.02)
+                    goingRight = True
+        elif count > 50:
             kill_count += 1
             if kill_count == 50:
                 break
+            if goingRight:
+                x = x + 1
+                answer = CheckWhite(color, x, y, pushFar, r, count)
+            else:
+                x = x - 1
+                answer = CheckWhite(color, x, y, -pushFar, r, count)
+
+            if answer:
+                goingRight = not goingRight
+                pyautogui.click()
+                time.sleep(0.02)
+                continue
     
     count = int(count)
     if highscore < count:

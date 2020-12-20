@@ -54,7 +54,7 @@ while True:
     mask = cv2.dilate(mask, kernel, iterations=1)
     lines[mask>0]=0
 
-    HoughLines = cv2.HoughLinesP(lines, 1, np.pi/180, threshold = 19, minLineLength = 19, maxLineGap = 1)
+    HoughLines = cv2.HoughLinesP(lines, 1, np.pi/180, threshold = 19, minLineLength = 20, maxLineGap = 1)
     if HoughLines is not None:
         for line in HoughLines:
             coords = line[0]
@@ -68,35 +68,68 @@ while True:
             x, y, r = pt[0], pt[1], pt[2]
 
             pushFar = 38
-            pushShort = 10
+            pushShort = 15
             lookUp = -3
 
-
             if goingRight:
-                answer = CheckWhite(color, x, y, pushFar, r, count)
+                answer = CheckWhite(color, x, y+lookUp, pushFar, r, count)
+                if not answer:
+                    answer = CheckWhite(color, x, y, pushFar, r, count)
             else:
-                answer = CheckWhite(color, x, y, -pushFar, r, count)
+                answer = CheckWhite(color, x, y+lookUp, -pushFar, r, count)
+                if not answer:
+                    answer = CheckWhite(color, x, y, -pushFar, r, count)
 
             if answer:
                 goingRight = not goingRight
                 pyautogui.click()
+                time.sleep(0.02)
                 image_holder.append((img, f"{count}--CHECKWHITE-CLICK{goingRight}-{x}-{y}-{pushFar}-{r}.png"))
                 continue
 
 
             if sum(black[y+lookUp,x+r+pushShort:x+pushFar]) > 0 and goingRight:
                 pyautogui.click()
+                time.sleep(0.02)
                 goingRight = False
-                image_holder.append((img, f"{count}color_{x+r+pushShort}-{x+pushFar}_{y+lookUp}_HitRight.png"))
+                image_holder.append((img, f"{count}color{x}-{y}-{r}_{x+r+pushShort}-{x+pushFar}_{y+lookUp}_HitRight.png"))
 
             elif not goingRight and sum(black[y+lookUp,x-pushFar : x-r-pushShort]) > 0:
                 pyautogui.click()
+                time.sleep(0.02)
                 goingRight = True
-                image_holder.append((img, f"{count}color_{x-pushFar}-{x-r-pushShort}_{y+lookUp}_HitLeft.png"))
+                image_holder.append((img, f"{count}color{x}-{y}-{r}_{x-pushFar}-{x-r-pushShort}_{y+lookUp}_HitLeft.png"))
+
+            elif sum(black[y,x+r+pushShort:x+pushFar]) > 0 and goingRight:
+                pyautogui.click()
+                time.sleep(0.02)
+                goingRight = False
+                image_holder.append((img, f"{count}color{x}-{y}-{r}_{x+r+pushShort}-{x+pushFar}_{y+lookUp}_HitRightY2.png"))
+
+            elif not goingRight and sum(black[y,x-pushFar : x-r-pushShort]) > 0:
+                pyautogui.click()
+                time.sleep(0.02)
+                goingRight = True
+                image_holder.append((img, f"{count}color{x}-{y}-{r}_{x-pushFar}-{x-r-pushShort}_{y+lookUp}_HitLeftY2.png"))
             else:
-                image_holder.append((img, f"{count}color_nohit.png"))
-    else:
-        image_holder.append((img, f"{count}color_noBALL-------------------.png"))
+                image_holder.append((img, f"{count}color_nohit-{x}-{y}-{r}.png"))
+
+    elif count > 50:
+        if goingRight:
+            x = x + 1
+            answer = CheckWhite(color, x, y, pushFar, r, count)
+            image_holder.append((img, f"{count}color_{x}_{y}_{pushFar}_{answer}GUESS.png"))
+        else:
+            x = x - 1
+            answer = CheckWhite(color, x, y, -pushFar, r, count)
+            image_holder.append((img, f"{count}color_{x}_{y}_{-pushFar}_{answer}GUESS.png"))
+
+        if answer:
+            goingRight = not goingRight
+            pyautogui.click()
+            time.sleep(0.02)
+            continue
+
         print(f"{count} - No BALLS!")
 
     end_t = time.time()
@@ -107,5 +140,5 @@ while True:
 response = input("Write images: y/n")
 
 if response.lower() == "y":
-    for image in image_holder:
+    for image in image_holder[-500:]:
         cv2.imwrite("C:/Users/programmer/Desktop/LInes/ZigZag/images/"+ image[1], image[0])
