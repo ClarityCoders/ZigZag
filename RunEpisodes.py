@@ -1,18 +1,18 @@
-from ppadb.client import Client
 import numpy as np
 import cv2
 import time
 import mss
 import pyautogui
-import random
 
 from utils.getkeys import key_check
 from utils.whitedetect import CheckWhite
 
+# Setup variables chage total_episodes to be whatever you want.
 episode_count = 0
 total_Episodes = 1000
 highscore = 0
 
+# This will run until you break by using h or hit total_episode limit.
 while True and episode_count < total_Episodes:
     episode_count += 1
     keys = key_check()
@@ -21,7 +21,6 @@ while True and episode_count < total_Episodes:
 
     pyautogui.PAUSE = 0
     for i in range(1,5):
-        #print(i)
         time.sleep(1)
 
     pyautogui.click()
@@ -36,13 +35,7 @@ while True and episode_count < total_Episodes:
 
     kernel = np.ones((3,3), np.uint8)
 
-    # lookUp = random.randint(-3,3)
-    # threshold = random.randint(10,50)
-    # minLineLength = random.randint(10, 25)
-    # maxLineGap = 1
-    # pushFar = random.randint(35,40)
-    # pushShort = random.randint(5, 20)
-
+    # Update these values to whatever you are trying to test.
     lookUp = -4
     threshold = 19
     minLineLength = 19
@@ -67,7 +60,6 @@ while True and episode_count < total_Episodes:
 
         #Mask
         mask = cv2.inRange(hsv, np.array([153, 96, 175]), np.array([156, 255, 255]))
-        #color[mask>0]=(255,255,152)
 
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
