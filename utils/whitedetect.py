@@ -85,11 +85,11 @@ def CheckWhite(img, x, y, far, radius, count, show=False):
     #     print(f"Blue Wall - {count}")
     #     return True
     # # Dark Teal 
-    elif b >= 150 and b <= 160 and g >= 150 and g <= 170 and r >= 65 and r <= 75:
-        img = cv2.circle(img, (x,y), radius=2, color=(0, 0, 0), thickness=-1)
-        img = cv2.circle(img, (x+far,y), radius=2, color=(0, 0, 255), thickness=-1)
-        print(f"Teal Wall - {count}")
-        return True
+    # elif b >= 150 and b <= 160 and g >= 150 and g <= 170 and r >= 65 and r <= 75:
+    #     img = cv2.circle(img, (x,y), radius=2, color=(0, 0, 0), thickness=-1)
+    #     img = cv2.circle(img, (x+far,y), radius=2, color=(0, 0, 255), thickness=-1)
+    #     print(f"Teal Wall - {count}")
+    #     return True
     else:
         return False
 

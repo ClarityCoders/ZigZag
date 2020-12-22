@@ -43,7 +43,7 @@ while True and episode_count < total_Episodes:
     # pushFar = random.randint(35,40)
     # pushShort = random.randint(5, 20)
 
-    lookUp = -3
+    lookUp = -4
     threshold = 19
     minLineLength = 19
     maxLineGap = 1
@@ -126,7 +126,7 @@ while True and episode_count < total_Episodes:
                     pyautogui.click()
                     time.sleep(0.02)
                     goingRight = True
-        elif count > 50:
+        elif count > 10:
             kill_count += 1
             if kill_count == 50:
                 break
